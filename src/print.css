@@ -1,0 +1,10 @@
+@media print {
+  .page {
+    page-break-before: always;
+  }
+
+  @page {
+    size: A4;
+    margin: 0mm;
+  }
+}
