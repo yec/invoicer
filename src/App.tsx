@@ -33,7 +33,7 @@ function App() {
     <AppProvider>
       <BrowserRouter>
         <div className="">
-          <Routes>
+          <Routes basename={"/invoicer"}>
             <Route
               path="/invoice/:invoiceid"
               element={
@@ -55,9 +55,7 @@ function App() {
                 </>
               }
             />
-            <Route>
-              <Empty />
-            </Route>
+            <Route element={<Empty />} />
           </Routes>
         </div>
       </BrowserRouter>

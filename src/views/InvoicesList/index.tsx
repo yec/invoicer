@@ -26,7 +26,7 @@ export function InvoicesList() {
       {invoices?.map((invoice) => (
         <Link
           key={invoice._id}
-          to={`/invoice/${invoice._id}`}
+          to={`/invoicer/invoice/${invoice._id}`}
           className={`${
             invoice._id === params.invoiceid && "bg-gray-200"
           } block p-2 pl-4 pt-4 pb-4 rounded-md focus:bg-yellow-200`}

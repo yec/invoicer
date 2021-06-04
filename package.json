@@ -2,6 +2,7 @@
   "name": "invoicer-web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://yec.github.io/invoicer",
   "dependencies": {
     "@craco/craco": "^6.1.2",
     "@tabler/icons": "^1.41.2",
