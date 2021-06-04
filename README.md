@@ -1,4 +1,4 @@
-# Invoice
+# Invoicer
 
 https://yec.github.io/invoicer/
 
