@@ -6,7 +6,9 @@ export function Empty() {
   const navigate = useNavigate();
   return (
     <div>
-      <button onClick={() => navigate(`invoice/${v4()}`)}>New Invoice</button>
+      <button onClick={() => navigate(`/invoicer/invoice/${v4()}`)}>
+        New Invoice
+      </button>
     </div>
   );
 }

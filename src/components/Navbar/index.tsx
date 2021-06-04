@@ -29,7 +29,7 @@ export function Navbar() {
 
         <button
           onClick={() => {
-            navigate(`/invoice/${v4()}`);
+            navigate(`/invoicer/invoice/${v4()}`);
           }}
           className="rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center"
         >
