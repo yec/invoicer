@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate, useParams, useRoutes } from "react-router-dom";
 import { v4 } from "uuid";
 import { useAppState } from "../../App";
@@ -13,11 +13,18 @@ import {
   IconCopy,
   IconFilePlus,
 } from "@tabler/icons";
+import {
+  AuthContext,
+  shortName,
+  signInGoogle,
+  signOut,
+} from "../../hooks/useAuth";
 
 export function Navbar() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
   const invoice = useInvoice(invoiceid);
+  const authContext = useContext(AuthContext);
 
   return (
     <div className="print:hidden sticky top-0 z-40 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex">
@@ -60,6 +67,30 @@ export function Navbar() {
             <IconLockOpen className="h-8" />
           )}
         </button>
+      </div>
+      <div className="ml-auto h-14 flex items-center pr-8">
+        {authContext.loaded &&
+          (authContext.user ? (
+            <details>
+              <summary>
+                <div className="select-none cursor-pointer rounded-full h-8 w-8 border flex items-center content-center">
+                  <div className="ml-auto mr-auto">
+                    {shortName(
+                      authContext.user.displayName || authContext.user.email
+                    )}
+                  </div>
+                </div>
+              </summary>
+
+              <div className="fixed right-0 mr-4 bg-white rounded-md shadow-md p-4">
+                <button onClick={() => signOut()}>Sign out</button>
+              </div>
+            </details>
+          ) : (
+            <button className="px-1" onClick={() => signInGoogle()}>
+              Sign in
+            </button>
+          ))}
       </div>
     </div>
   );

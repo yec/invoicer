@@ -12,6 +12,13 @@ code {
     monospace;
 }
 
+details summary::marker {
+  display: none;
+}
+details summary {
+  list-style: none;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
