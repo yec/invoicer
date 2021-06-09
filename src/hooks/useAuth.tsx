@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import {
   getAuth,
   signInWithPopup,
+  signInAnonymously,
   GoogleAuthProvider,
   onAuthStateChanged,
   User,
@@ -77,5 +78,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
   }, []);
+
+  /**
+   * Sign in anonymously
+   */
+  React.useEffect(() => {
+    if (!value.user) {
+      const auth = getAuth();
+      signInAnonymously(auth);
+    }
+  }, [value.user]);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
