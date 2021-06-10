@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
+import { SyncDB } from "../SyncDB";
 
 const initialValue = { loaded: false };
 
@@ -82,12 +83,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /**
    * Sign in anonymously
    */
-  React.useEffect(() => {
-    if (!value.user) {
-      const auth = getAuth();
-      signInAnonymously(auth);
-    }
-  }, [value.user]);
+  // React.useEffect(() => {
+  //   if (!value.user) {
+  //     const auth = getAuth();
+  //     signInAnonymously(auth);
+  //   }
+  // }, [value.user]);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {value.user && <SyncDB />}
+      {children}
+    </AuthContext.Provider>
+  );
 }

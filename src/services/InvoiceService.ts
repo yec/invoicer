@@ -33,17 +33,18 @@ export class InvoiceService {
 
   static async lock(id: string) {
     const db = PouchService.invoices();
-    return db.upsert(id, (doc) => {
-      return { ...doc, status: "locked" };
+    return db.upsert(id, (doc: unknown) => {
+      return { ...(doc as InvoiceState), status: "locked" };
     });
   }
 
   static async toggleLock(id: string) {
     const db = PouchService.invoices();
-    return db.upsert<Partial<InvoiceState>>(id, (doc) => {
+    return db.upsert<Partial<InvoiceState>>(id, (doc: unknown) => {
       return {
-        ...doc,
-        status: doc.status === "locked" ? "unlocked" : "locked",
+        ...(doc as InvoiceState),
+        status:
+          (doc as InvoiceState).status === "locked" ? "unlocked" : "locked",
       };
     });
   }
@@ -79,10 +80,10 @@ export class InvoiceService {
   static deleteFile(id: string, key: string) {
     const db = PouchService.invoices();
 
-    return db.upsert(id, (doc) => {
+    return db.upsert(id, (doc: unknown) => {
       const newDoc = doc as InvoiceState;
       delete newDoc.files[key];
-      return { ...doc };
+      return { ...(doc as InvoiceState) };
     });
   }
 
@@ -103,12 +104,12 @@ export class InvoiceService {
   }
 
   static changes(
-    onChange: (value: PouchDB.Core.ChangesResponseChange<{}>) => any
+    onChange: (value: PouchDB.Core.ChangesResponseChange<InvoiceState>) => any
   ) {
     const db = PouchService.invoices();
 
     return db
-      .changes({ since: "now", live: true, include_docs: true })
+      .changes({ since: "now", live: true, include_docs: false })
       .on("change", onChange);
   }
 }

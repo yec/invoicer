@@ -6,7 +6,6 @@ import { InvoicesList } from "./views/InvoicesList";
 import { Empty } from "./views/Empty";
 import { Invoice } from "./views/Invoice";
 import { AuthProvider } from "./hooks/useAuth";
-import { SyncDB } from "./SyncDB";
 
 export type AppState = {
   invoiceId?: string;
@@ -35,7 +34,6 @@ function App() {
     <AuthProvider>
       <AppProvider>
         <BrowserRouter>
-          <SyncDB />
           <div className="">
             <Routes basename={"/invoicer"}>
               <Route

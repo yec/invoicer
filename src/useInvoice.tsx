@@ -6,8 +6,10 @@ export function useInvoice(id: string | undefined) {
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
 
   React.useEffect(() => {
-    const listener = InvoiceService.changes(async () => {
-      id && setInvoice(await InvoiceService.get(id));
+    const listener = InvoiceService.changes(async (value) => {
+      if (id && id === value.id) {
+        setInvoice(await InvoiceService.get(id));
+      }
     });
 
     async function getInvoice() {
