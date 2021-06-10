@@ -3,14 +3,14 @@ import React, { useContext } from "react";
 import { AuthContext } from "./hooks/useAuth";
 
 export function SyncDB() {
-  const authContext = useContext(AuthContext);
+  const { user, password } = useContext(AuthContext);
   React.useEffect(() => {
-    if (authContext.user) {
+    if (user && password) {
       const localDB = new PouchDb("invoices");
-      const dbName = "invoices_" + authContext.user?.uid.toLowerCase();
-      const username = authContext.user?.uid;
+      const dbName = "invoices_" + user.uid.toLowerCase();
+      const username = user.uid;
       const remoteDB = new PouchDb(
-        `https://${username}:${username}@d224310a-8908-4d94-858b-e0e7dc1e00a7-bluemix.cloudantnosqldb.appdomain.cloud/${encodeURIComponent(
+        `https://${username}:${password}@d224310a-8908-4d94-858b-e0e7dc1e00a7-bluemix.cloudantnosqldb.appdomain.cloud/${encodeURIComponent(
           dbName
         )}`
       );
@@ -22,6 +22,6 @@ export function SyncDB() {
 
       return () => syncHandler.cancel();
     }
-  }, [authContext.user]);
+  }, [user, password]);
   return null;
 }

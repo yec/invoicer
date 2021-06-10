@@ -14,6 +14,7 @@ const initialValue = { loaded: false };
 
 export type AuthContextProps = {
   user?: User;
+  password?: string;
   loaded?: boolean;
 };
 
@@ -73,7 +74,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setValue({ user, loaded: true });
+        user.getIdTokenResult().then((idTokenResult) => {
+          setValue({
+            user,
+            password: (idTokenResult.claims.cloudant_password as string) || "",
+            loaded: true,
+          });
+        });
       } else {
         setValue({ loaded: true });
       }

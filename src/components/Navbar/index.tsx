@@ -73,13 +73,18 @@ export function Navbar() {
           (authContext.user ? (
             <details>
               <summary>
-                <div className="select-none cursor-pointer rounded-full h-8 w-8 border flex items-center content-center">
+                <img
+                  className="rounded-full h-8 w-8"
+                  src={authContext.user.photoURL || ""}
+                  alt="avatar"
+                />
+                {/* <div className="select-none cursor-pointer rounded-full h-8 w-8 border flex items-center content-center">
                   <div className="ml-auto mr-auto">
                     {shortName(
                       authContext.user.displayName || authContext.user.email
                     )}
                   </div>
-                </div>
+                </div> */}
               </summary>
 
               <div className="fixed right-0 mr-4 bg-white rounded-md shadow-md p-4">
