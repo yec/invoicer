@@ -2,7 +2,6 @@
   "name": "invoicer-web",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://yec.github.io/invoicer",
   "dependencies": {
     "@craco/craco": "^6.1.2",
     "@firebase/app-types": "0.x",
