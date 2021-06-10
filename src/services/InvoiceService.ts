@@ -104,7 +104,7 @@ export class InvoiceService {
   }
 
   static changes(
-    onChange: (value: PouchDB.Core.ChangesResponseChange<InvoiceState>) => any
+    onChange: (value: PouchDB.Core.ChangesResponseChange<{}>) => any
   ) {
     const db = PouchService.invoices();
 

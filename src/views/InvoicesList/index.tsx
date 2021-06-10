@@ -10,7 +10,6 @@ export function InvoicesList() {
   React.useEffect(() => {
     async function getInvoices() {
       const all = await InvoiceService.getAll();
-      console.log("all", all);
       setInvoices(all);
     }
 
