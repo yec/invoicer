@@ -362,7 +362,7 @@ export function Invoice() {
         );
       })}
       {state.status !== "locked" && (
-        <div className="w-a4w ml-8 mb-4 print:hidden">
+        <div className="w-full md:w-a4w md:ml-8 mb-4 print:hidden">
           <FileDrop
             className=""
             onFiles={(files) => {
