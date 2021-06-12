@@ -10,9 +10,11 @@ export function Empty() {
   React.useEffect(() => {
     if (invoices.loaded) {
       if (invoices.items.length > 0) {
-        navigate(`/invoicer/invoice/${invoices.items[0]._id}`);
+        navigate(`/invoicer/invoice/${invoices.items[0]._id}`, {
+          replace: true,
+        });
       } else {
-        navigate(`/invoicer/invoice/${v4()}`);
+        navigate(`/invoicer/invoice/${v4()}`, { replace: true });
       }
     }
   }, [invoices.loaded]);

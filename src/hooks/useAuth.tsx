@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -8,7 +8,6 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
-import { SyncDB } from "../SyncDB";
 
 const initialValue = { loaded: false };
 
@@ -97,10 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   }
   // }, [value.user]);
 
-  return (
-    <AuthContext.Provider value={value}>
-      {value.user && <SyncDB />}
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }

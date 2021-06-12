@@ -5,7 +5,8 @@ import { Navbar } from "./components/Navbar";
 import { InvoicesList } from "./views/InvoicesList";
 import { Empty } from "./views/Empty";
 import { Invoice } from "./views/Invoice";
-import { AuthProvider } from "./hooks/useAuth";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
+import { SyncDB } from "./SyncDB";
 
 export type AppState = {
   invoiceId?: string;
@@ -18,7 +19,13 @@ export const AppContext =
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const value = React.useState<AppState>({});
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  const authContext = useAuth();
+  return (
+    <AppContext.Provider value={value}>
+      {authContext.user && <SyncDB />}
+      {children}
+    </AppContext.Provider>
+  );
 }
 
 export function useAppState() {
