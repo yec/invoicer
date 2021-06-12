@@ -1,28 +1,14 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { InvoiceService } from "../../services/InvoiceService";
-import { Client, InvoiceState } from "../../state";
+import { useInvoices } from "../../useInvoice";
 
 export function InvoicesList() {
-  const [invoices, setInvoices] = React.useState<InvoiceState[]>();
+  const invoices = useInvoices();
   const params = useParams();
-
-  React.useEffect(() => {
-    async function getInvoices() {
-      const all = await InvoiceService.getAll();
-      setInvoices(all);
-    }
-
-    InvoiceService.changes((value) => {
-      getInvoices();
-    });
-
-    getInvoices();
-  }, []);
 
   return (
     <>
-      {invoices?.map((invoice) => (
+      {invoices.items.map((invoice) => (
         <Link
           key={invoice._id}
           to={`/invoicer/invoice/${invoice._id}`}

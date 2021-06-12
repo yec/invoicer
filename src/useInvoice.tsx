@@ -25,3 +25,24 @@ export function useInvoice(id: string | undefined) {
 
   return invoice;
 }
+
+export function useInvoices() {
+  const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
+  const [loaded, setLoaded] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    async function getInvoices() {
+      const all = await InvoiceService.getAll();
+      setInvoices(all);
+      setLoaded(true);
+    }
+
+    InvoiceService.changes((value) => {
+      getInvoices();
+    });
+
+    getInvoices();
+  }, []);
+
+  return { items: invoices, loaded };
+}
