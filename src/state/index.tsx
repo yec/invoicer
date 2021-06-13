@@ -48,6 +48,7 @@ export type FileData = {
   type: string;
   lastModified: number;
   size: number;
+  fullPath: string;
 };
 
 export type SetFileData = {

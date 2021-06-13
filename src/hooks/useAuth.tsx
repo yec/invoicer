@@ -105,6 +105,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const config = {
       apiKey: "AIzaSyC5jEf_W2gb0peBeCEoFzavUOvCnXNOBcg",
       authDomain: "invoicer-316210.firebaseapp.com",
+      projectId: "invoicer-316210",
+      storageBucket: "invoicer-316210.appspot.com",
+      messagingSenderId: "186914931592",
+      appId: "1:186914931592:web:c8226de73bbad69fc3f03d",
+      measurementId: "G-3VD699PTY7",
     };
     initializeApp(config);
     const auth = getAuth();

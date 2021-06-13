@@ -48,7 +48,6 @@ export function FileDrop({
       id="drop_zone"
       className={`${className} rounded-3xl border-dashed border-4 border-gray-400 h-28 flex flex-col md:flex-row justify-center items-center`}
       onDragOver={(ev) => {
-        console.log("File(s) in drop zone");
         // Prevent default behavior (Prevent file from being opened)
         ev.preventDefault();
       }}
@@ -56,9 +55,9 @@ export function FileDrop({
     >
       <label
         htmlFor="file-upload"
-        className="border-2 border-gray-400 text-gray-500 rounded-md flex flex-row px-4 py-1 mx-2"
+        className="select-none focus:outline-none cursor-pointer border-2 border-gray-400 text-gray-500 rounded-md flex flex-row px-4 py-1 mx-2"
       >
-        <IconUpload /> Upload file
+        <IconUpload className="mr-1" /> Upload file
         <input
           id="file-upload"
           name="file"

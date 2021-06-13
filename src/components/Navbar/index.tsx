@@ -39,9 +39,7 @@ export function Navbar() {
   const { user, loaded } = useAuth();
 
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(
-      loaded && user ? user.uid.toLowerCase() : undefined
-    );
+    return new InvoiceService();
   }, [user, loaded]);
 
   return (

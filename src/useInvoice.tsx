@@ -7,9 +7,7 @@ export function useInvoice(id: string | undefined) {
   const { user, loaded } = useAuth();
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(
-      loaded && user ? user.uid.toLowerCase() : undefined
-    );
+    return new InvoiceService();
   }, [user, loaded]);
 
   React.useEffect(() => {
@@ -40,9 +38,7 @@ export function useInvoices() {
   const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(
-      userLoaded && user ? user.uid.toLowerCase() : undefined
-    );
+    return new InvoiceService();
   }, [user, userLoaded]);
 
   React.useEffect(() => {

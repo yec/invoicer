@@ -17,23 +17,11 @@ import { FileData, invoiceState, SetInvoiceState } from "../../state";
 import { InvoiceService } from "../../services/InvoiceService";
 import { useInvoice } from "../../useInvoice";
 import { useAuth } from "../../hooks/useAuth";
+import imageString from "./imageString";
+import fsDelete from "./fsDelete";
+import FSImage from "./FSImage";
 
 type FileID = string;
-
-async function imageString(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.addEventListener("loadend", (fileread) => {
-      if (fileread && fileread.target) {
-        resolve(fileread.target.result as string);
-      }
-      resolve("");
-    });
-
-    setTimeout(() => reject("timeout"), 1000);
-  });
-}
 
 export function InputField({
   label,
@@ -71,9 +59,7 @@ export function Invoice() {
   const { invoiceid } = useParams();
   const state = useInvoice(invoiceid) || invoiceState;
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(
-      loaded && user ? user.uid.toLowerCase() : undefined
-    );
+    return new InvoiceService();
   }, [user, loaded]);
   const setInvoiceState = (obj: SetInvoiceState) => {
     invoiceService.put(invoiceid, obj);
@@ -348,7 +334,11 @@ export function Invoice() {
             </div>
             <div className="group">
               <div className="ml-auto mr-auto w-10/12 w-10/12 mt-8">
-                <img src={file.data} alt={file.name} />
+                {file.fullPath ? (
+                  <FSImage fullPath={file.fullPath} />
+                ) : (
+                  <img src={file.data} alt={file.name} />
+                )}
               </div>
               {state.status !== "locked" && (
                 <div className="ml-auto mr-auto mt-8 w-10/12 w-10/12 print:invisible">
@@ -356,6 +346,7 @@ export function Invoice() {
                     size="small"
                     className=" bg-gray-400 group-hover:bg-red-400 opacity-10 group-hover:opacity-100"
                     onClick={() => {
+                      fsDelete(file.fullPath);
                       invoiceService.deleteFile(invoiceid, key);
                     }}
                   >
@@ -375,14 +366,15 @@ export function Invoice() {
               const filesState: Record<FileID, FileData> = {};
 
               Promise.all(files.map(imageString)).then((res) => {
-                res.forEach((src, i) => {
+                res.forEach(({ src, snapshot }, i) => {
                   const { name, type, size, lastModified } = files[i];
                   filesState[v4()] = {
                     name,
                     type,
                     size,
                     lastModified,
-                    data: src,
+                    data: "",
+                    fullPath: snapshot.metadata.fullPath,
                   };
                 });
                 setInvoiceState({ files: filesState });
