@@ -7,10 +7,6 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
-import PouchDb from "pouchdb-browser";
-import upsert from "pouchdb-upsert";
-
-PouchDb.plugin(upsert);
 
 const initialValue = { loaded: false };
 
@@ -82,25 +78,25 @@ export function useAuthState(): [
   AuthContextProps,
   React.Dispatch<React.SetStateAction<AuthContextProps>>
 ] {
-  const db = React.useMemo(() => new PouchDb("app"), []);
   const [state, setState] = React.useState(initialValue as AuthContextProps);
-  React.useEffect(() => {
-    db.get<AuthContextProps>("auth").then(({ ...doc }) => {
-      console.log("doc", doc);
-      setState(doc);
-    });
-  }, []);
-  const persistState = React.useCallback((value) => {
-    db.upsert("auth", () => {
-      const {
-        user: { uid, photoURL },
-        ...newDoc
-      } = value;
-      return JSON.parse(JSON.stringify({ ...newDoc, user: { uid, photoURL } }));
-    });
-    return setState(value);
-  }, []);
-  return [state, persistState];
+  // React.useEffect(() => {
+  //   db.get<AuthContextProps>("auth").then(({ ...doc }) => {
+  //     console.log("doc", doc);
+  //     setState(doc);
+  //   });
+  //   setState(window.localStorage.getItem('invoice_auth'))
+  // }, []);
+  // const persistState = React.useCallback((value) => {
+  //   db.upsert("auth", () => {
+  //     const {
+  //       user: { uid, photoURL },
+  //       ...newDoc
+  //     } = value;
+  //     return JSON.parse(JSON.stringify({ ...newDoc, user: { uid, photoURL } }));
+  //   });
+  //   return setState(value);
+  // }, []);
+  return [state, setState];
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
