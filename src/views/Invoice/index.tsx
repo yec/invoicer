@@ -16,6 +16,7 @@ import { LineForm } from "../../components/LineForm";
 import { FileData, Client, invoiceState, SetInvoiceState } from "../../state";
 import { InvoiceService } from "../../services/InvoiceService";
 import { useInvoice } from "../../useInvoice";
+import { useAuth } from "../../hooks/useAuth";
 
 type FileID = string;
 
@@ -65,17 +66,20 @@ export function EditContext({ element }: { element: React.ReactElement }) {
 }
 
 export function Invoice() {
+  const { user, loaded } = useAuth();
   const [showAddRow, setShowAddRow] = React.useState(false);
-
   const { invoiceid } = useParams();
   const state = useInvoice(invoiceid) || invoiceState;
+  const invoiceService = React.useMemo(() => {
+    return new InvoiceService(user && user.uid.toLowerCase());
+  }, [user, loaded]);
   const setInvoiceState = (obj: SetInvoiceState) => {
-    InvoiceService.put(invoiceid, obj);
+    invoiceService.put(invoiceid, obj);
   };
 
   React.useEffect(() => {
-    InvoiceService.getOrCreate(invoiceid);
-  }, [invoiceid]);
+    invoiceService.getOrCreate(invoiceid);
+  }, [invoiceid, invoiceService]);
 
   return (
     <div className="text-gray-700 font-medium">
@@ -350,7 +354,7 @@ export function Invoice() {
                     size="small"
                     className=" bg-gray-400 group-hover:bg-red-400 opacity-10 group-hover:opacity-100"
                     onClick={() => {
-                      InvoiceService.deleteFile(invoiceid, key);
+                      invoiceService.deleteFile(invoiceid, key);
                     }}
                   >
                     Remove

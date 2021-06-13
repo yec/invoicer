@@ -4,18 +4,17 @@ import { v4 } from "uuid";
 import deepmerge from "deepmerge";
 
 export class InvoiceService {
-  _id: string;
-  _db: PouchDB.Database;
+  private _dbName: string;
+  private _db: PouchDB.Database;
   data?: {};
 
-  constructor(uuid: string) {
-    this._id = uuid;
-    this._db = PouchService.invoices();
+  constructor(dbName?: string) {
+    this._dbName = dbName || "invoices";
+    this._db = PouchService.invoices(this._dbName);
   }
 
-  static async getAll() {
-    const db = PouchService.invoices();
-    const invoices = await db.allDocs<InvoiceState>({
+  async getAll() {
+    const invoices = await this._db.allDocs<InvoiceState>({
       include_docs: true,
       descending: true,
     });
@@ -25,22 +24,19 @@ export class InvoiceService {
       .map((doc) => doc as InvoiceState);
   }
 
-  static async delete(id: string) {
-    const db = PouchService.invoices();
-    const doc = await db.get(id);
-    return db.remove(doc);
+  async delete(id: string) {
+    const doc = await this._db.get(id);
+    return this._db.remove(doc);
   }
 
-  static async lock(id: string) {
-    const db = PouchService.invoices();
-    return db.upsert(id, (doc: unknown) => {
+  lock(id: string) {
+    return this._db.upsert(id, (doc: unknown) => {
       return { ...(doc as InvoiceState), status: "locked" };
     });
   }
 
-  static async toggleLock(id: string) {
-    const db = PouchService.invoices();
-    return db.upsert<Partial<InvoiceState>>(id, (doc: unknown) => {
+  toggleLock(id: string) {
+    return this._db.upsert<Partial<InvoiceState>>(id, (doc: unknown) => {
       return {
         ...(doc as InvoiceState),
         status:
@@ -49,66 +45,55 @@ export class InvoiceService {
     });
   }
 
-  static async get(id: string) {
-    const db = PouchService.invoices();
-    return db.get<InvoiceState>(id) as Promise<InvoiceState | undefined>;
+  get(id: string) {
+    return this._db.get<InvoiceState>(id) as Promise<InvoiceState | undefined>;
   }
 
-  static async copy(id: string) {
-    const db = PouchService.invoices();
-    const { _id, _rev, ...original } = await db.get(id);
-    db.put({ ...original, _id: v4() });
+  async copy(id: string) {
+    const { _id, _rev, ...original } = await this._db.get(id);
+    this._db.put({ ...original, _id: v4() });
   }
 
-  save() {
-    const invoice = {
-      _id: this._id,
-      ...this.data,
-    };
+  // save() {
+  //   const invoice = {
+  //     _id: this._id,
+  //     ...this.data,
+  //   };
 
-    this._db.put(invoice);
-  }
+  //   this._db.put(invoice);
+  // }
 
-  static put(id: string, invoice: SetInvoiceState) {
-    const db = PouchService.invoices();
-
-    return db.upsert(id, (doc) => {
+  put(id: string, invoice: SetInvoiceState) {
+    return this._db.upsert(id, (doc) => {
       return deepmerge(doc, invoice);
     });
   }
 
-  static deleteFile(id: string, key: string) {
-    const db = PouchService.invoices();
-
-    return db.upsert(id, (doc: unknown) => {
+  deleteFile(id: string, key: string) {
+    return this._db.upsert(id, (doc: unknown) => {
       const newDoc = doc as InvoiceState;
       delete newDoc.files[key];
       return { ...(doc as InvoiceState) };
     });
   }
 
-  static async getOrCreate(uuid: string) {
-    const db = PouchService.invoices();
+  async getOrCreate(uuid: string) {
     try {
       const invoice = await this.get(uuid);
       if (invoice) {
         return invoice;
       }
     } catch (e) {
-      await db.upsert<InvoiceState>(uuid, (doc) => {
+      await this._db.upsert<InvoiceState>(uuid, (doc) => {
         return { ...invoiceState, ...doc };
       });
-      const res = (await db.get(uuid)) as InvoiceState;
+      const res = (await this._db.get(uuid)) as InvoiceState;
       return res;
     }
   }
 
-  static changes(
-    onChange: (value: PouchDB.Core.ChangesResponseChange<{}>) => any
-  ) {
-    const db = PouchService.invoices();
-
-    return db
+  changes(onChange: (value: PouchDB.Core.ChangesResponseChange<{}>) => any) {
+    return this._db
       .changes({ since: "now", live: true, include_docs: false })
       .on("change", onChange);
   }

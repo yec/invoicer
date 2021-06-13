@@ -5,7 +5,7 @@ import { InvoiceState } from "../state";
 PouchDb.plugin(upsert);
 
 export class PouchService {
-  static invoices() {
-    return new PouchDb<InvoiceState>("invoices");
+  static invoices(dbName?: string) {
+    return new PouchDb<InvoiceState>(dbName || "invoices");
   }
 }

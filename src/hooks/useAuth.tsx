@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
+import PouchDb from "pouchdb-browser";
 
 const initialValue = { loaded: false };
 
@@ -75,8 +76,33 @@ export function signOut() {
   auth.signOut();
 }
 
+export function useAuthState(): [
+  AuthContextProps,
+  React.Dispatch<React.SetStateAction<AuthContextProps>>
+] {
+  const db = React.useMemo(() => new PouchDb("app"), []);
+  const [state, setState] = React.useState(initialValue as AuthContextProps);
+  React.useEffect(() => {
+    db.get<AuthContextProps>("auth").then(({ ...doc }) => {
+      console.log("doc", doc);
+      setState(doc);
+    });
+  }, []);
+  const persistState = React.useCallback((value) => {
+    db.upsert("auth", () => {
+      const {
+        user: { uid },
+        ...newDoc
+      } = value;
+      return JSON.parse(JSON.stringify({ ...newDoc, user: { uid } }));
+    });
+    return setState(value);
+  }, []);
+  return [state, persistState];
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [value, setValue] = React.useState<AuthContextProps>(initialValue);
+  const [value, setValue] = useAuthState();
   React.useEffect(() => {
     const config = {
       apiKey: "AIzaSyC5jEf_W2gb0peBeCEoFzavUOvCnXNOBcg",

@@ -43,7 +43,11 @@ export function Navbar() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
   const invoice = useInvoice(invoiceid);
-  const authContext = useAuth();
+  const { user, loaded } = useAuth();
+
+  const invoiceService = React.useMemo(() => {
+    return new InvoiceService(user && user.uid.toLowerCase());
+  }, [user, loaded]);
 
   return (
     <div className="print:hidden sticky top-0 z-50 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex border-b border-gray-200">
@@ -63,14 +67,14 @@ export function Navbar() {
           <IconFilePlus className="h-8" />
         </button>
         <button
-          onClick={() => invoiceid && InvoiceService.copy(invoiceid)}
+          onClick={() => invoiceid && invoiceService.copy(invoiceid)}
           className="ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center"
         >
           <IconCopy className="h-8" />
         </button>
         <button
           disabled={invoice && invoice.status === "locked"}
-          onClick={() => invoiceid && InvoiceService.delete(invoiceid)}
+          onClick={() => invoiceid && invoiceService.delete(invoiceid)}
           className={`${clsx({
             "text-gray-400": invoice && invoice.status === "locked",
           })} ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center`}
@@ -78,7 +82,7 @@ export function Navbar() {
           <IconTrash className="h-8" />
         </button>
         <button
-          onClick={() => invoiceid && InvoiceService.toggleLock(invoiceid)}
+          onClick={() => invoiceid && invoiceService.toggleLock(invoiceid)}
           className="ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center"
         >
           {invoice && invoice.status === "locked" ? (
@@ -89,13 +93,13 @@ export function Navbar() {
         </button>
       </div>
       <div className="ml-auto h-14 flex items-center pr-8">
-        {authContext.loaded &&
-          (authContext.user ? (
+        {loaded &&
+          (user ? (
             <details>
               <summary>
                 <img
                   className="rounded-full h-8 w-8"
-                  src={authContext.user.photoURL || ""}
+                  src={user.photoURL || ""}
                   alt="avatar"
                 />
                 {/* <div className="select-none cursor-pointer rounded-full h-8 w-8 border flex items-center content-center">

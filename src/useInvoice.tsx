@@ -1,48 +1,57 @@
 import React from "react";
 import { InvoiceState } from "./state";
 import { InvoiceService } from "./services/InvoiceService";
+import { useAuth } from "./hooks/useAuth";
 
 export function useInvoice(id: string | undefined) {
+  const { user, loaded } = useAuth();
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
+  const invoiceService = React.useMemo(() => {
+    return new InvoiceService(user && user.uid.toLowerCase());
+  }, [user, loaded]);
 
   React.useEffect(() => {
-    const listener = InvoiceService.changes(async (value) => {
+    const listener = invoiceService.changes(async (value) => {
       if (id && id === value.id) {
-        setInvoice(await InvoiceService.get(id));
+        setInvoice(await invoiceService.get(id));
       }
     });
 
     async function getInvoice() {
       try {
-        id && setInvoice(await InvoiceService.get(id));
+        id && setInvoice(await invoiceService.get(id));
       } catch (e) {}
     }
 
     getInvoice();
 
     return () => listener && listener.cancel();
-  }, [id]);
+  }, [id, invoiceService]);
 
   return invoice;
 }
 
 export function useInvoices() {
+  const { user } = useAuth();
   const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
   const [loaded, setLoaded] = React.useState<boolean>(false);
+  const invoiceService = React.useMemo(() => {
+    return new InvoiceService(user && user.uid.toLowerCase());
+  }, [user, loaded]);
 
   React.useEffect(() => {
     async function getInvoices() {
-      const all = await InvoiceService.getAll();
+      const all = await invoiceService.getAll();
       setInvoices(all);
       setLoaded(true);
     }
 
-    InvoiceService.changes((value) => {
+    invoiceService.changes((value) => {
       getInvoices();
     });
 
     getInvoices();
-  }, []);
+  }, [invoiceService]);
 
   return { items: invoices, loaded };
 }
