@@ -13,8 +13,6 @@ export function Empty() {
         navigate(`/invoicer/invoice/${items[0]._id}`, {
           replace: true,
         });
-      } else {
-        navigate(`/invoicer/invoice/${v4()}`, { replace: true });
       }
     }
   }, [loaded, items, navigate]);
