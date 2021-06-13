@@ -1,11 +1,10 @@
 import clsx from "clsx";
-import React, { useContext } from "react";
-import { useNavigate, useParams, useRoutes } from "react-router-dom";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { v4 } from "uuid";
 import { useAppState } from "../../App";
 import { useInvoice } from "../../useInvoice";
 import { InvoiceService } from "../../services/InvoiceService";
-import { ReactComponent as Trash } from "../../trash.svg";
 import {
   IconX,
   IconMenu,
@@ -15,13 +14,7 @@ import {
   IconCopy,
   IconFilePlus,
 } from "@tabler/icons";
-import {
-  AuthContext,
-  shortName,
-  signInGoogle,
-  signOut,
-  useAuth,
-} from "../../hooks/useAuth";
+import { signInGoogle, signOut, useAuth } from "../../hooks/useAuth";
 
 export function MenuButton() {
   const [appState, setAppState] = useAppState();
@@ -46,7 +39,9 @@ export function Navbar() {
   const { user, loaded } = useAuth();
 
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(user && user.uid.toLowerCase());
+    return new InvoiceService(
+      loaded && user ? user.uid.toLowerCase() : undefined
+    );
   }, [user, loaded]);
 
   return (

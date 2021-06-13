@@ -13,7 +13,7 @@ import {
   formatCurrency,
 } from "../../components/LineController";
 import { LineForm } from "../../components/LineForm";
-import { FileData, Client, invoiceState, SetInvoiceState } from "../../state";
+import { FileData, invoiceState, SetInvoiceState } from "../../state";
 import { InvoiceService } from "../../services/InvoiceService";
 import { useInvoice } from "../../useInvoice";
 import { useAuth } from "../../hooks/useAuth";
@@ -71,7 +71,9 @@ export function Invoice() {
   const { invoiceid } = useParams();
   const state = useInvoice(invoiceid) || invoiceState;
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(user && user.uid.toLowerCase());
+    return new InvoiceService(
+      loaded && user ? user.uid.toLowerCase() : undefined
+    );
   }, [user, loaded]);
   const setInvoiceState = (obj: SetInvoiceState) => {
     invoiceService.put(invoiceid, obj);

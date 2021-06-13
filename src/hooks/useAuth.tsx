@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setValue({ loaded: true });
       }
     });
-  }, []);
+  }, [setValue]);
 
   return (
     <AuthContext.Provider value={[value, setValue]}>

@@ -5,18 +5,18 @@ import { useInvoices } from "../../useInvoice";
 
 export function Empty() {
   const navigate = useNavigate();
-  const invoices = useInvoices();
+  const { items, loaded } = useInvoices();
 
   React.useEffect(() => {
-    if (invoices.loaded) {
-      if (invoices.items.length > 0) {
-        navigate(`/invoicer/invoice/${invoices.items[0]._id}`, {
+    if (loaded) {
+      if (items.length > 0) {
+        navigate(`/invoicer/invoice/${items[0]._id}`, {
           replace: true,
         });
       } else {
         navigate(`/invoicer/invoice/${v4()}`, { replace: true });
       }
     }
-  }, [invoices.loaded]);
+  }, [loaded, items, navigate]);
   return null;
 }

@@ -7,13 +7,17 @@ export function useInvoice(id: string | undefined) {
   const { user, loaded } = useAuth();
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(user && user.uid.toLowerCase());
+    return new InvoiceService(
+      loaded && user ? user.uid.toLowerCase() : undefined
+    );
   }, [user, loaded]);
 
   React.useEffect(() => {
     const listener = invoiceService.changes(async (value) => {
       if (id && id === value.id) {
-        setInvoice(await invoiceService.get(id));
+        if (!value.deleted) {
+          setInvoice(await invoiceService.get(id));
+        }
       }
     });
 
@@ -32,12 +36,14 @@ export function useInvoice(id: string | undefined) {
 }
 
 export function useInvoices() {
-  const { user } = useAuth();
+  const { user, loaded: userLoaded } = useAuth();
   const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService(user && user.uid.toLowerCase());
-  }, [user, loaded]);
+    return new InvoiceService(
+      userLoaded && user ? user.uid.toLowerCase() : undefined
+    );
+  }, [user, userLoaded]);
 
   React.useEffect(() => {
     async function getInvoices() {
@@ -46,11 +52,12 @@ export function useInvoices() {
       setLoaded(true);
     }
 
-    invoiceService.changes((value) => {
+    const listener = invoiceService.changes((value) => {
       getInvoices();
     });
 
     getInvoices();
+    return () => listener && listener.cancel();
   }, [invoiceService]);
 
   return { items: invoices, loaded };
