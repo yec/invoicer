@@ -3,12 +3,14 @@ import { initializeApp } from "firebase/app";
 import {
   getAuth,
   signInWithPopup,
-  signInAnonymously,
   GoogleAuthProvider,
   onAuthStateChanged,
   User,
 } from "firebase/auth";
 import PouchDb from "pouchdb-browser";
+import upsert from "pouchdb-upsert";
+
+PouchDb.plugin(upsert);
 
 const initialValue = { loaded: false };
 
@@ -91,10 +93,10 @@ export function useAuthState(): [
   const persistState = React.useCallback((value) => {
     db.upsert("auth", () => {
       const {
-        user: { uid },
+        user: { uid, photoURL },
         ...newDoc
       } = value;
-      return JSON.parse(JSON.stringify({ ...newDoc, user: { uid } }));
+      return JSON.parse(JSON.stringify({ ...newDoc, user: { uid, photoURL } }));
     });
     return setState(value);
   }, []);
@@ -124,16 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
   }, []);
-
-  /**
-   * Sign in anonymously
-   */
-  // React.useEffect(() => {
-  //   if (!value.user) {
-  //     const auth = getAuth();
-  //     signInAnonymously(auth);
-  //   }
-  // }, [value.user]);
 
   return (
     <AuthContext.Provider value={[value, setValue]}>
