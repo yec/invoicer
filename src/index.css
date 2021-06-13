@@ -24,6 +24,10 @@ details summary {
 @tailwind components;
 @tailwind utilities;
 
+#file-upload {
+  display: none;
+}
+
 /**
  * floating form labels
  */

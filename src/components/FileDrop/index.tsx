@@ -1,3 +1,4 @@
+import { IconUpload } from "@tabler/icons";
 import React from "react";
 
 function dropHandler(ev: React.DragEvent<HTMLDivElement>) {
@@ -45,7 +46,7 @@ export function FileDrop({
   return (
     <div
       id="drop_zone"
-      className={`${className} rounded-3xl border-dashed border-4 border-gray-400 h-28 flex justify-center items-center`}
+      className={`${className} rounded-3xl border-dashed border-4 border-gray-400 h-28 flex flex-col md:flex-row justify-center items-center`}
       onDragOver={(ev) => {
         console.log("File(s) in drop zone");
         // Prevent default behavior (Prevent file from being opened)
@@ -53,7 +54,33 @@ export function FileDrop({
       }}
       onDrop={(ev) => onFiles(dropHandler(ev))}
     >
-      <p className="text-gray-500 font-semibold">
+      <label
+        htmlFor="file-upload"
+        className="border-2 border-gray-400 text-gray-500 rounded-md flex flex-row px-4 py-1 mx-2"
+      >
+        <IconUpload /> Upload file
+        <input
+          id="file-upload"
+          name="file"
+          onChange={(a) => {
+            a.preventDefault();
+            const files: File[] = [];
+            if (a.target.files) {
+              // Use DataTransfer interface to access the file(s)
+              for (let i = 0; i < a.target.files.length; i++) {
+                console.log(
+                  "... file[" + i + "].name = " + a.target.files[i].name
+                );
+                files.push(a.target.files[i]);
+              }
+            }
+            onFiles(files);
+          }}
+          type="file"
+        />
+      </label>
+
+      <p className="text-gray-500 font-semibold hidden md:block">
         Drag and drop attachments here ...
       </p>
     </div>
