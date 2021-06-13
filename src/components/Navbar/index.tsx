@@ -40,8 +40,10 @@ export function Navbar() {
   const { user, loaded } = useAuth();
 
   const invoiceService = React.useMemo(() => {
-    return user && new InvoiceService(dbName(user.uid));
-  }, [user]);
+    return !loaded
+      ? undefined
+      : new InvoiceService(user ? dbName(user.uid) : "invoices");
+  }, [user, loaded]);
 
   return (
     <div className="print:hidden sticky top-0 z-50 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex border-b border-gray-200">

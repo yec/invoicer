@@ -55,13 +55,17 @@ export function EditContext({ element }: { element: React.ReactElement }) {
 }
 
 export function Invoice() {
-  const { user } = useAuth();
+  const { user, loaded } = useAuth();
   const [showAddRow, setShowAddRow] = React.useState(false);
   const { invoiceid } = useParams();
   const state = useInvoice(invoiceid) || invoiceState;
+
   const invoiceService = React.useMemo(() => {
-    return user && new InvoiceService(dbName(user.uid));
-  }, [user]);
+    return !loaded
+      ? undefined
+      : new InvoiceService(user ? dbName(user.uid) : "invoices");
+  }, [user, loaded]);
+
   const setInvoiceState = (obj: SetInvoiceState) => {
     invoiceService?.put(invoiceid, obj);
   };

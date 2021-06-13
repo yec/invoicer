@@ -5,11 +5,13 @@ import { useAuth } from "./hooks/useAuth";
 import { dbName } from "./dbName";
 
 export function useInvoice(id: string | undefined) {
-  const { user } = useAuth();
+  const { user, loaded } = useAuth();
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
   const invoiceService = React.useMemo(() => {
-    return user && new InvoiceService(dbName(user.uid));
-  }, [user]);
+    return !loaded
+      ? undefined
+      : new InvoiceService(user ? dbName(user.uid) : "invoices");
+  }, [user, loaded]);
 
   React.useEffect(() => {
     const listener =
@@ -41,8 +43,10 @@ export function useInvoices() {
   const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const invoiceService = React.useMemo(() => {
-    return user && new InvoiceService(dbName(user.uid));
-  }, [user]);
+    return !userLoaded
+      ? undefined
+      : new InvoiceService(user ? dbName(user.uid) : "invoices");
+  }, [user, userLoaded]);
 
   React.useEffect(() => {
     async function getInvoices() {
