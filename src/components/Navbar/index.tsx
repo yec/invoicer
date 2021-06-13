@@ -20,6 +20,7 @@ import {
   shortName,
   signInGoogle,
   signOut,
+  useAuth,
 } from "../../hooks/useAuth";
 
 export function MenuButton() {
@@ -42,7 +43,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
   const invoice = useInvoice(invoiceid);
-  const authContext = useContext(AuthContext);
+  const authContext = useAuth();
 
   return (
     <div className="print:hidden sticky top-0 z-50 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex border-b border-gray-200">

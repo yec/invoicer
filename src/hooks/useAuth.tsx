@@ -17,7 +17,12 @@ export type AuthContextProps = {
   loaded?: boolean;
 };
 
-export const AuthContext = React.createContext<AuthContextProps>(initialValue);
+export const AuthContext = React.createContext<
+  [
+    AuthContextProps,
+    React.Dispatch<React.SetStateAction<AuthContextProps>> | null
+  ]
+>([initialValue, null]);
 
 export const shortName = (name: string | null) => {
   const [firstname, lastname] = name?.split(" ") || ["?"];
@@ -55,6 +60,14 @@ export function signInGoogle() {
       // const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
     });
+}
+
+export function useSignInGoogle() {
+  const [auth, setAuth] = useContext(AuthContext);
+  return () => {
+    setAuth && setAuth({ ...auth, loaded: false });
+    signInGoogle();
+  };
 }
 
 export function signOut() {
@@ -96,9 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   }
   // }, [value.user]);
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={[value, setValue]}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  return context[0];
 }

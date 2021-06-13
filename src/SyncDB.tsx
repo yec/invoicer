@@ -1,9 +1,9 @@
 import PouchDb from "pouchdb-browser";
-import React, { useContext } from "react";
-import { AuthContext } from "./hooks/useAuth";
+import React from "react";
+import { useAuth } from "./hooks/useAuth";
 
 export function SyncDB() {
-  const { user, password } = useContext(AuthContext);
+  const { user, password } = useAuth();
   React.useEffect(() => {
     if (user && password) {
       const localDB = new PouchDb("invoices");
