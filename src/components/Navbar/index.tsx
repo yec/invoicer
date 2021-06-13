@@ -7,6 +7,8 @@ import { useInvoice } from "../../useInvoice";
 import { InvoiceService } from "../../services/InvoiceService";
 import { ReactComponent as Trash } from "../../trash.svg";
 import {
+  IconX,
+  IconMenu,
   IconTrash,
   IconLockOpen,
   IconLock,
@@ -20,6 +22,22 @@ import {
   signOut,
 } from "../../hooks/useAuth";
 
+export function MenuButton() {
+  const [appState, setAppState] = useAppState();
+  return (
+    <button
+      onClick={() => setAppState({ ...appState, listOpen: !appState.listOpen })}
+      className="lg:hidden h-14 w-14 flex items-center justify-center border-r border-gray-200 focus:outline-none"
+    >
+      {appState.listOpen ? (
+        <IconX className="h-8" />
+      ) : (
+        <IconMenu className="h-8" />
+      )}
+    </button>
+  );
+}
+
 export function Navbar() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
@@ -27,7 +45,8 @@ export function Navbar() {
   const authContext = useContext(AuthContext);
 
   return (
-    <div className="print:hidden sticky top-0 z-40 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex">
+    <div className="print:hidden sticky top-0 z-50 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex border-b border-gray-200">
+      <MenuButton />
       <div className="h-14 flex items-center pl-8 ">
         {/* <img className="h-8" src="/logo.svg" alt="invoicer logo" />
         <div className="pl-3 flex h-full items-center justify-center semi">
@@ -87,12 +106,12 @@ export function Navbar() {
                 </div> */}
               </summary>
 
-              <div className="fixed right-0 mr-4 bg-white rounded-md shadow-md p-4">
+              <div className="fixed right-0 mr-4 bg-white rounded-md shadow-md p-4 text-sm">
                 <button onClick={() => signOut()}>Sign out</button>
               </div>
             </details>
           ) : (
-            <button className="px-1" onClick={() => signInGoogle()}>
+            <button className="px-1 text-sm" onClick={() => signInGoogle()}>
               Sign in
             </button>
           ))}
