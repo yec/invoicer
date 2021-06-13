@@ -11312,6 +11312,11 @@ tailwindcss-glow@^2.0.0-alpha.1:
     lodash "^4.17.21"
     tailwindcss "^2.0.4"
 
+tailwindcss-padding-safe@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tailwindcss-padding-safe/-/tailwindcss-padding-safe-1.0.5.tgz#0878bca1ec68fbd1664b02547d29f3db8248eede"
+  integrity sha512-ofAhVZ0Et3r3mygLBxaJjpjnmdg4gviovh9nX79+hPZ23evQeSa7BEVRFRmC3w7pE7fgofgm8EjH/LP0xaIJRw==
+
 tailwindcss@^2.0.4, "tailwindcss@npm:@tailwindcss/postcss7-compat":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@tailwindcss/postcss7-compat/-/postcss7-compat-2.1.2.tgz#4ae2a3a3c05622ee04307997b0f8bea5c8dbc2b6"

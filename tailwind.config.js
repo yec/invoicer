@@ -22,5 +22,8 @@ module.exports = {
       backgroundColor: ["active"],
     },
   },
-  plugins: [require("tailwindcss-glow")()],
+  plugins: [
+    require("tailwindcss-glow")(),
+    require("tailwindcss-padding-safe")(),
+  ],
 };

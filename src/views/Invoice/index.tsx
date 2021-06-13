@@ -385,7 +385,7 @@ export function Invoice() {
           />
         </div>
       )}
-      <div className="print:hidden sticky bottom-0 z-30 lg:z-50 w-full bg-white h-12 flex items-center justify-end pl-8 pr-8 shadow-inner">
+      <div className="print:hidden sticky bottom-0 z-30 lg:z-50 w-full bg-white h-12 flex items-center justify-end pl-8 pr-8 pb-2-safe shadow-inner">
         <div className="text-red-500 mr-auto">{state.invoiceNumber}</div>
         <div>
           {state.client.name} {formatCurrency(calculateTotal(state.lines))}
