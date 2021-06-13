@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { v4 } from "uuid";
 import { useInvoices } from "../../useInvoice";
 
 export function Empty() {
