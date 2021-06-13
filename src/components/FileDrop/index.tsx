@@ -1,5 +1,7 @@
 import { IconUpload } from "@tabler/icons";
+import clsx from "clsx";
 import React from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 function dropHandler(ev: React.DragEvent<HTMLDivElement>) {
   console.log("File(s) dropped");
@@ -43,21 +45,47 @@ export function FileDrop({
   className?: string;
   onFiles: (files: File[]) => void;
 }) {
+  const [dragOver, setDragOver] = React.useState<boolean>(false);
+  const { user } = useAuth();
   return (
     <div
       id="drop_zone"
-      className={`${className} rounded-3xl border-dashed border-4 border-gray-400 h-28 flex flex-col md:flex-row justify-center items-center`}
+      className={clsx(
+        `${className} rounded-3xl border-dashed border-4 border-gray-400 h-28 flex flex-col md:flex-row justify-center items-center`,
+        {
+          "border-gray-600": dragOver,
+        }
+      )}
       onDragOver={(ev) => {
+        !dragOver && setDragOver(true);
         // Prevent default behavior (Prevent file from being opened)
         ev.preventDefault();
       }}
-      onDrop={(ev) => onFiles(dropHandler(ev))}
+      onDragLeave={() => {
+        setDragOver(false);
+      }}
+      onDrop={(ev) => {
+        setDragOver(false);
+        if (!user) {
+          alert("Sign in to do that");
+          ev.preventDefault();
+          return;
+        }
+        onFiles(dropHandler(ev));
+      }}
     >
       <label
+        onClick={(e) => {
+          if (!user) {
+            alert("Sign in to do that");
+            e.preventDefault();
+          }
+        }}
         htmlFor="file-upload"
         className="select-none focus:outline-none cursor-pointer border-2 border-gray-400 text-gray-500 rounded-md flex flex-row px-4 py-1 mx-2"
       >
-        <IconUpload className="mr-1" /> Upload file
+        <IconUpload className="mr-1" />
+        Upload file
         <input
           id="file-upload"
           name="file"

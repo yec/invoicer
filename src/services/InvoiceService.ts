@@ -8,8 +8,8 @@ export class InvoiceService {
   private _db: PouchDB.Database;
   data?: {};
 
-  constructor(dbName?: string) {
-    this._dbName = dbName || "invoices";
+  constructor(dbName: string) {
+    this._dbName = dbName;
     this._db = PouchService.invoices(this._dbName);
   }
 

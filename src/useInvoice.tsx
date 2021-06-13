@@ -2,26 +2,29 @@ import React from "react";
 import { InvoiceState } from "./state";
 import { InvoiceService } from "./services/InvoiceService";
 import { useAuth } from "./hooks/useAuth";
+import { dbName } from "./dbName";
 
 export function useInvoice(id: string | undefined) {
-  const { user, loaded } = useAuth();
+  const { user } = useAuth();
   const [invoice, setInvoice] = React.useState<InvoiceState | undefined>();
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService();
-  }, [user, loaded]);
+    return user && new InvoiceService(dbName(user.uid));
+  }, [user]);
 
   React.useEffect(() => {
-    const listener = invoiceService.changes(async (value) => {
-      if (id && id === value.id) {
-        if (!value.deleted) {
-          setInvoice(await invoiceService.get(id));
+    const listener =
+      invoiceService &&
+      invoiceService.changes(async (value) => {
+        if (id && id === value.id) {
+          if (!value.deleted) {
+            setInvoice(await invoiceService.get(id));
+          }
         }
-      }
-    });
+      });
 
     async function getInvoice() {
       try {
-        id && setInvoice(await invoiceService.get(id));
+        id && invoiceService && setInvoice(await invoiceService.get(id));
       } catch (e) {}
     }
 
@@ -38,19 +41,23 @@ export function useInvoices() {
   const [invoices, setInvoices] = React.useState<InvoiceState[]>([]);
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService();
-  }, [user, userLoaded]);
+    return user && new InvoiceService(dbName(user.uid));
+  }, [user]);
 
   React.useEffect(() => {
     async function getInvoices() {
-      const all = await invoiceService.getAll();
-      setInvoices(all);
-      setLoaded(true);
+      if (invoiceService) {
+        const all = await invoiceService.getAll();
+        setInvoices(all);
+        setLoaded(true);
+      }
     }
 
-    const listener = invoiceService.changes((value) => {
-      getInvoices();
-    });
+    const listener =
+      invoiceService &&
+      invoiceService.changes((value) => {
+        getInvoices();
+      });
 
     getInvoices();
     return () => listener && listener.cancel();

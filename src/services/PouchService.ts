@@ -7,8 +7,8 @@ PouchDb.plugin(upsert);
 PouchDb.plugin(memoryadapter);
 
 export class PouchService {
-  static invoices(dbName?: string) {
-    return new PouchDb<InvoiceState>(dbName || "invoices", {
+  static invoices(dbName: string) {
+    return new PouchDb<InvoiceState>(dbName, {
       adapter: "memory",
     });
   }

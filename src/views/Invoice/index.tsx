@@ -20,6 +20,7 @@ import { useAuth } from "../../hooks/useAuth";
 import imageString from "./imageString";
 import fsDelete from "./fsDelete";
 import FSImage from "./FSImage";
+import { dbName } from "../../dbName";
 
 type FileID = string;
 
@@ -54,19 +55,19 @@ export function EditContext({ element }: { element: React.ReactElement }) {
 }
 
 export function Invoice() {
-  const { user, loaded } = useAuth();
+  const { user } = useAuth();
   const [showAddRow, setShowAddRow] = React.useState(false);
   const { invoiceid } = useParams();
   const state = useInvoice(invoiceid) || invoiceState;
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService();
-  }, [user, loaded]);
+    return user && new InvoiceService(dbName(user.uid));
+  }, [user]);
   const setInvoiceState = (obj: SetInvoiceState) => {
-    invoiceService.put(invoiceid, obj);
+    invoiceService?.put(invoiceid, obj);
   };
 
   React.useEffect(() => {
-    invoiceService.getOrCreate(invoiceid);
+    invoiceService?.getOrCreate(invoiceid);
   }, [invoiceid, invoiceService]);
 
   return (
@@ -347,7 +348,7 @@ export function Invoice() {
                     className=" bg-gray-400 group-hover:bg-red-400 opacity-10 group-hover:opacity-100"
                     onClick={() => {
                       fsDelete(file.fullPath);
-                      invoiceService.deleteFile(invoiceid, key);
+                      invoiceService?.deleteFile(invoiceid, key);
                     }}
                   >
                     Remove

@@ -15,6 +15,7 @@ import {
   IconFilePlus,
 } from "@tabler/icons";
 import { signInGoogle, signOut, useAuth } from "../../hooks/useAuth";
+import { dbName } from "../../dbName";
 
 export function MenuButton() {
   const [appState, setAppState] = useAppState();
@@ -39,8 +40,8 @@ export function Navbar() {
   const { user, loaded } = useAuth();
 
   const invoiceService = React.useMemo(() => {
-    return new InvoiceService();
-  }, [user, loaded]);
+    return user && new InvoiceService(dbName(user.uid));
+  }, [user]);
 
   return (
     <div className="print:hidden sticky top-0 z-50 lg:z-50 w-full max-w-8xl mx-auto bg-white flex-none flex border-b border-gray-200">
@@ -60,14 +61,14 @@ export function Navbar() {
           <IconFilePlus className="h-8" />
         </button>
         <button
-          onClick={() => invoiceid && invoiceService.copy(invoiceid)}
+          onClick={() => invoiceid && invoiceService?.copy(invoiceid)}
           className="ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center"
         >
           <IconCopy className="h-8" />
         </button>
         <button
           disabled={invoice && invoice.status === "locked"}
-          onClick={() => invoiceid && invoiceService.delete(invoiceid)}
+          onClick={() => invoiceid && invoiceService?.delete(invoiceid)}
           className={`${clsx({
             "text-gray-400": invoice && invoice.status === "locked",
           })} ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center`}
@@ -75,7 +76,7 @@ export function Navbar() {
           <IconTrash className="h-8" />
         </button>
         <button
-          onClick={() => invoiceid && invoiceService.toggleLock(invoiceid)}
+          onClick={() => invoiceid && invoiceService?.toggleLock(invoiceid)}
           className="ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center"
         >
           {invoice && invoice.status === "locked" ? (
