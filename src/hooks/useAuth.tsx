@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
-  signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   onAuthStateChanged,
   User,
@@ -40,7 +40,7 @@ export const shortName = (name: string | null) => {
 export function signInGoogle() {
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
-  signInWithPopup(auth, provider)
+  signInWithRedirect(auth, provider)
     .then((result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
       // const credential = GoogleAuthProvider.credentialFromResult(result);

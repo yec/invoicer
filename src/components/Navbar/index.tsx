@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 } from "uuid";
 import { useAppState } from "../../App";
-import { useInvoice } from "../../useInvoice";
+import { useInvoice, useInvoices } from "../../useInvoice";
 import { InvoiceService } from "../../services/InvoiceService";
 import {
   IconX,
@@ -37,6 +37,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const { invoiceid } = useParams();
   const invoice = useInvoice(invoiceid);
+  const { items, loaded: invoicesLoaded } = useInvoices();
   const { user, loaded } = useAuth();
 
   const invoiceService = React.useMemo(() => {
@@ -69,11 +70,14 @@ export function Navbar() {
           <IconCopy className="h-8" />
         </button>
         <button
-          disabled={invoice && invoice.status === "locked"}
+          disabled={
+            (invoice && invoice.status === "locked") ||
+            (invoicesLoaded && items.length < 2)
+          }
           onClick={() => invoiceid && invoiceService?.delete(invoiceid)}
-          className={`${clsx({
-            "text-gray-400": invoice && invoice.status === "locked",
-          })} ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center`}
+          className={`${clsx(
+            "disabled:opacity-30"
+          )} ml-4 rounded-md hover:bg-gray-200 transition duration-200 h-12 w-12 flex items-center justify-center`}
         >
           <IconTrash className="h-8" />
         </button>
