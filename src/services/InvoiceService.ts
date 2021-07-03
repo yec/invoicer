@@ -69,6 +69,14 @@ export class InvoiceService {
     });
   }
 
+  deleteLine(id: string, key: string) {
+    return this._db.upsert(id, (doc: unknown) => {
+      const newDoc = doc as InvoiceState;
+      delete newDoc.lines[key];
+      return { ...(doc as InvoiceState) };
+    });
+  }
+
   deleteFile(id: string, key: string) {
     return this._db.upsert(id, (doc: unknown) => {
       const newDoc = doc as InvoiceState;

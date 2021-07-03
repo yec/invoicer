@@ -52,6 +52,11 @@ export function LineController(data: LineFormProps) {
     setEdit(false);
   };
 
+  const onDelete = () => {
+    data.onDelete && data.onDelete();
+    setEdit(false);
+  };
+
   const toggleEdit = () => {
     if (!edit && !data.edit) {
       return;
@@ -61,7 +66,7 @@ export function LineController(data: LineFormProps) {
 
   return edit ? (
     <td colSpan={4}>
-      <LineForm {...{ ...data, onSave, onCancel }} />
+      <LineForm {...{ ...data, onSave, onCancel, onDelete }} />
     </td>
   ) : (
     <>

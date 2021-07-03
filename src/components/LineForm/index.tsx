@@ -12,6 +12,7 @@ export type LineFormProps = LineFormData & {
   edit?: boolean;
   onSave?: (data: LineFormData) => void;
   onCancel?: () => void;
+  onDelete?: () => void;
 };
 
 function getValue(e: React.FormEvent<HTMLFormElement>, name: string) {
@@ -28,6 +29,7 @@ export function LineForm({
   rate = "",
   onSave,
   onCancel,
+  onDelete,
 }: LineFormProps) {
   return (
     <form
@@ -55,7 +57,7 @@ export function LineForm({
         </div>
 
         <div className="flex flex-row">
-          <div className="mr-2">
+          <div className="mx-1">
             <Button
               onClick={() => onCancel && onCancel()}
               type="button"
@@ -64,8 +66,15 @@ export function LineForm({
               Cancel
             </Button>
           </div>
-          <Button type="submit" className="bg-blue-500">
+          <Button type="submit" className="mx-1 bg-blue-500">
             Save
+          </Button>
+          <Button
+            onClick={() => onDelete && onDelete()}
+            type="button"
+            className="mx-1 border border-red-500 text-red-500"
+          >
+            Delete
           </Button>
         </div>
       </div>

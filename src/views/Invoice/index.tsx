@@ -223,6 +223,9 @@ export function Invoice() {
                           onSave={(values) => {
                             setInvoiceState({ lines: { [key]: values } });
                           }}
+                          onDelete={() => {
+                            invoiceService?.deleteLine(invoiceid, key);
+                          }}
                           {...lineData}
                         />
                       </tr>
