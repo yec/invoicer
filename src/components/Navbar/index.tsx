@@ -116,7 +116,10 @@ export function Navbar() {
               </div>
             </details>
           ) : (
-            <button className="px-1 text-sm" onClick={() => signInGoogle()}>
+            <button
+              className="px-1 text-sm focus:outline-none"
+              onClick={() => signInGoogle()}
+            >
               Sign in
             </button>
           ))}
