@@ -1,16 +1,24 @@
 import { LineFormData } from "../components/LineForm";
 
-export type NET_30 = {
-  days: 30;
-  label: "Net 30";
+export type Terms = {
+  days: number;
+  label: string;
 };
 
-export type NET_7 = {
-  days: 7;
-  label: "Net 7";
-};
-
-export type Terms = NET_30 | NET_7;
+export const TERMS_OPTIONS: Terms[] = [
+  {
+    days: 7,
+    label: "Net 7",
+  },
+  {
+    days: 14,
+    label: "Net 14",
+  },
+  {
+    days: 30,
+    label: "Net 30",
+  },
+];
 
 export type Status = "locked" | "unlocked";
 

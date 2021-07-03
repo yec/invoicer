@@ -13,7 +13,12 @@ import {
   formatCurrency,
 } from "../../components/LineController";
 import { LineForm } from "../../components/LineForm";
-import { FileData, invoiceState, SetInvoiceState } from "../../state";
+import {
+  FileData,
+  invoiceState,
+  SetInvoiceState,
+  TERMS_OPTIONS,
+} from "../../state";
 import { InvoiceService } from "../../services/InvoiceService";
 import { useInvoice } from "../../useInvoice";
 import { useAuth } from "../../hooks/useAuth";
@@ -190,16 +195,28 @@ export function Invoice() {
             <div className="flex flex-row justify-end relative">
               <div className="text-right font-bold">Terms:</div>
               <div className="text-right w-20 uppercase">
-                {state.terms.label}
+                <select
+                  onChange={(e) => {
+                    const terms = TERMS_OPTIONS.find(
+                      (opt) => opt.days === +e.target.value
+                    );
+                    terms && setInvoiceState({ terms });
+                  }}
+                  value={state.terms.days}
+                >
+                  {TERMS_OPTIONS.map((opt) => (
+                    <option key={opt.days} value={opt.days}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <InputField
-              edit={state.status === "unlocked"}
+              edit={false}
               label="Due Date:"
               value={state.dueDate}
-              onBlur={(ele) => {
-                setInvoiceState({ dueDate: ele.target.innerText });
-              }}
+              onBlur={() => {}}
             />
           </div>
           <div className="clear-both pt-10">
