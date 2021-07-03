@@ -421,8 +421,22 @@ export function Invoice() {
                     size="small"
                     className=" bg-gray-400 group-hover:bg-red-400 opacity-10 group-hover:opacity-100"
                     onClick={() => {
-                      fsDelete(file.fullPath);
                       invoiceService?.deleteFile(invoiceid, key);
+                      // if no other usages delete from firebase storage too
+                      invoiceService?.getAll().then((invoices) => {
+                        const otherUsagesList = invoices
+                          .filter(({ _id }) => _id !== state._id)
+                          .map(({ files, _id }) =>
+                            Object.keys(files).indexOf(key)
+                          );
+                        const otherUsages = otherUsagesList.reduce(
+                          (prev, current) => prev || current !== -1,
+                          false
+                        );
+                        if (!otherUsages) {
+                          fsDelete(file.fullPath);
+                        }
+                      });
                     }}
                   >
                     Remove
