@@ -36,7 +36,7 @@ export const invoiceState: InvoiceState = {
   invoiceNumber: "1",
   dueDate: "",
   issueDate: "",
-  terms: { days: 30, label: "Net 30" },
+  terms: { days: 14, label: "Net 14" },
   payment: "Payment Details",
   comments: "Comments",
   lines: {

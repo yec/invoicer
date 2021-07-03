@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router";
 import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 import { v4 } from "uuid";
 import { Button } from "../../components/Button";
 import { ContentEditable } from "../../components/ContentEditable";
@@ -84,7 +85,7 @@ function toDate(value: string) {
 }
 
 function fromDate(date: Date) {
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  return format(date, "yyyy/MM/dd");
 }
 
 export function Invoice() {
@@ -219,12 +220,12 @@ export function Invoice() {
             />
             <Field label="Date:">
               {state.status === "locked" ? (
-                <>{state.issueDate}</>
+                <>{fromDate(toDate(state.issueDate))}</>
               ) : (
                 <DatePicker
                   className="bg-pink-100 w-20 text-right text-xs font-medium"
                   selected={issueDate}
-                  dateFormat="yyyy/M/d"
+                  dateFormat="yyyy/MM/dd"
                   onChange={(date: Date) => {
                     setInvoiceState({
                       issueDate: fromDate(date),
