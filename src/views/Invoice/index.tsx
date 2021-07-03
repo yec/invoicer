@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router";
+import DatePicker from "react-datepicker";
 import { v4 } from "uuid";
 import { Button } from "../../components/Button";
 import { ContentEditable } from "../../components/ContentEditable";
@@ -26,6 +27,7 @@ import imageString from "./imageString";
 import fsDelete from "./fsDelete";
 import FSImage from "./FSImage";
 import { dbName } from "../../dbName";
+import clsx from "clsx";
 
 type FileID = string;
 
@@ -50,6 +52,21 @@ export function InputField({
   );
 }
 
+export function Field({
+  children,
+  label,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-row justify-end">
+      <div className="text-right font-bold">{label}</div>
+      <div className="text-right w-20">{children}</div>
+    </div>
+  );
+}
+
 export function EditContext({ element }: { element: React.ReactElement }) {
   // const [{ _id }] = useInvoiceContext();
   // const { status } = useInvoice(_id) || { status: "locked" };
@@ -57,6 +74,17 @@ export function EditContext({ element }: { element: React.ReactElement }) {
   return status === "locked"
     ? React.cloneElement(<div />, element.props)
     : React.cloneElement(element, element.props);
+}
+
+function toDate(value: string) {
+  const date = value.split("/");
+  return date.length === 3
+    ? new Date(+date[0], +date[1] - 1, +date[2])
+    : new Date();
+}
+
+function fromDate(date: Date) {
+  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
 }
 
 export function Invoice() {
@@ -78,6 +106,11 @@ export function Invoice() {
   React.useEffect(() => {
     invoiceService?.getOrCreate(invoiceid);
   }, [invoiceid, invoiceService]);
+
+  const issueDate = toDate(state.issueDate);
+  const dueDate = new Date(
+    new Date(issueDate).setDate(issueDate.getDate() + +state.terms.days)
+  );
 
   return (
     <div className="text-gray-700 font-medium">
@@ -184,38 +217,55 @@ export function Invoice() {
                 setInvoiceState({ invoiceNumber: ele.target.innerText });
               }}
             />
-            <InputField
-              edit={state.status === "unlocked"}
-              label="Date:"
-              value={state.issueDate}
-              onBlur={(ele) => {
-                setInvoiceState({ issueDate: ele.target.innerText });
-              }}
-            />
+            <Field label="Date:">
+              {state.status === "locked" ? (
+                <>{state.issueDate}</>
+              ) : (
+                <DatePicker
+                  className="bg-pink-100 w-20 text-right text-xs font-medium"
+                  selected={issueDate}
+                  dateFormat="yyyy/M/d"
+                  onChange={(date: Date) => {
+                    setInvoiceState({
+                      issueDate: fromDate(date),
+                    });
+                  }}
+                />
+              )}
+            </Field>
             <div className="flex flex-row justify-end relative">
               <div className="text-right font-bold">Terms:</div>
-              <div className="text-right w-20 uppercase">
-                <select
-                  onChange={(e) => {
-                    const terms = TERMS_OPTIONS.find(
-                      (opt) => opt.days === +e.target.value
-                    );
-                    terms && setInvoiceState({ terms });
-                  }}
-                  value={state.terms.days}
-                >
-                  {TERMS_OPTIONS.map((opt) => (
-                    <option key={opt.days} value={opt.days}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+              <div
+                className={clsx("text-right w-20 uppercase", {
+                  "bg-pink-100": state.status === "unlocked",
+                })}
+              >
+                {state.status === "locked" ? (
+                  <>{state.terms.label}</>
+                ) : (
+                  <select
+                    className="font-medium uppercase bg-transparent"
+                    onChange={(e) => {
+                      const terms = TERMS_OPTIONS.find(
+                        (opt) => opt.days === +e.target.value
+                      );
+                      terms && setInvoiceState({ terms });
+                    }}
+                    value={state.terms.days}
+                  >
+                    {TERMS_OPTIONS.map((opt) => (
+                      <option key={opt.days} value={opt.days}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
             <InputField
               edit={false}
               label="Due Date:"
-              value={state.dueDate}
+              value={fromDate(dueDate)}
               onBlur={() => {}}
             />
           </div>
