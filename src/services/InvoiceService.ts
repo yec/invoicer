@@ -3,6 +3,19 @@ import { InvoiceState, invoiceState, SetInvoiceState } from "../state";
 import { v4 } from "uuid";
 import deepmerge from "deepmerge";
 
+function nextSequence(id: string) {
+  try {
+    const matches = id.match(/[1-9][0-9]*/)
+    if (matches) {
+      const num = parseInt(matches[0])
+      const nextnum = (num + 1).toString()
+      return id.replace(/[1-9][0-9]*/, nextnum)
+    }
+  } catch (e) {}
+
+  return id + ' copy'
+}
+
 export class InvoiceService {
   private _dbName: string;
   private _db: PouchDB.Database;
@@ -21,6 +34,7 @@ export class InvoiceService {
 
     return invoices.rows
       .flatMap((row) => (row.doc ? row.doc : []))
+      .sort((a, b) =>  a.invoiceNumber > b.invoiceNumber ? -1 : 1)
       .map((doc) => doc as InvoiceState);
   }
 
@@ -50,8 +64,8 @@ export class InvoiceService {
   }
 
   async copy(id: string) {
-    const { _id, _rev, ...original } = await this._db.get(id);
-    this._db.put({ ...original, _id: v4() });
+    const { _id, _rev, invoiceNumber, ...original } = await this._db.get(id);
+    this._db.put({ ...original, _id: v4(), invoiceNumber: nextSequence(invoiceNumber)  });
   }
 
   // save() {
